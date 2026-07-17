@@ -1,0 +1,19 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m unittest discover -s slo/tests -t . -v
+      - name: smoke-test the CLI
+        run: |
+          python runbooks/scripts/check_error_rate.py \
+            --long-good 999900 --long-total 1000000 \
+            --short-good 9999 --short-total 10000
